@@ -97,7 +97,7 @@ class AppUserAuthenticator extends AbstractFormLoginAuthenticator implements Pas
         }
 
         // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        return new RedirectResponse($this->urlGenerator->generate('/'));
+        return new RedirectResponse($this->urlGenerator->generate('produit_index'));
         throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
     }
 
