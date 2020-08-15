@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 /**
  * @Route("/produit")
@@ -33,14 +34,49 @@ class ProduitController extends AbstractController
         $produit = new Produit();
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
+        $entityManager = $this->getDoctrine()->getManager();
+        
 
-        if ($form->isSubmitted() && $form->isValid()) {
+       /*  if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($produit);
             $entityManager->flush();
 
             return $this->redirectToRoute('produit_index');
+        } */
+
+        if($form->isSubmitted() && $form->isValid()){
+
+            $photoFile = $form->get('photo')->getData();
+
+            // Si un fichier a été uploadé
+            if ($photoFile) {
+                // On le renomme
+                $newFilename = uniqid().'.'.$photoFile->guessExtension();
+
+                // On essaie de le déplacer sur le serveur
+                try {
+                    $photoFile->move(
+                        $this->getParameter('upload_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('danger', 'Impossible d\'uploader la photo');
+                }
+
+                // On met àjour l'objet avec le bon nom de fichier
+                $produit->setPhoto($newFilename);
+            }
+
+
+            $entityManager->persist($produit);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Produit added');
         }
+
+
+
 
         return $this->render('produit/new.html.twig', [
             'produit' => $produit,
@@ -66,12 +102,40 @@ class ProduitController extends AbstractController
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+       /*  if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
             return $this->redirectToRoute('produit_index');
-        }
+        } */
 
+        if($form->isSubmitted() && $form->isValid()){
+
+            $photoFile = $form->get('photo')->getData();
+
+            // Si un fichier a été uploadé
+            if ($photoFile) {
+                // On le renomme
+                $newFilename = uniqid().'.'.$photoFile->guessExtension();
+
+                // On essaie de le déplacer sur le serveur
+                try {
+                    $photoFile->move(
+                        $this->getParameter('upload_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('danger', 'Impossible d\'uploader la photo');
+                }
+
+                // On met àjour l'objet avec le bon nom de fichier
+                $produit->setPhoto($newFilename);
+            }
+
+
+            $this->getDoctrine()->getManager()->flush();
+
+            $this->addFlash('success', 'Produit updated');
+        }
         return $this->render('produit/edit.html.twig', [
             'produit' => $produit,
             'form' => $form->createView(),
