@@ -2,17 +2,14 @@
 
 namespace App\Controller;
 
-use App\Entity\ContenuPanier;
 use App\Entity\Produit;
-use App\Form\ContenuPanierType;
 use App\Form\ProduitType;
 use App\Repository\ProduitRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class ProduitController extends AbstractController
 {
@@ -61,6 +58,36 @@ class ProduitController extends AbstractController
             $this->addFlash('success', 'Produit sauvegardé');
             return $this->redirectToRoute('produit_index');
         }
+
+        if($form->isSubmitted() && $form->isValid()){
+
+            $photoFile = $form->get('photo')->getData();
+
+            // Si un fichier a été uploadé
+            if ($photoFile) {
+                // On le renomme
+                $newFilename = uniqid().'.'.$photoFile->guessExtension();
+
+                // On essaie de le déplacer sur le serveur
+                try {
+                    $photoFile->move(
+                        $this->getParameter('upload_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('danger', 'Impossible d\'uploader la photo');
+                }
+
+                // On met àjour l'objet avec le bon nom de fichier
+                $produit->setPhoto($newFilename);
+            }
+
+
+            $em->persist($produit);
+            $em->flush();
+
+            $this->addFlash('success', 'Produit added');
+        }
     }
 
     /**
@@ -107,8 +134,36 @@ class ProduitController extends AbstractController
             $this->addFlash('success', 'Produit sauvegardé');
       
             return $this->redirectToRoute('produit_index');
-        }
+        } 
 
+        if($form->isSubmitted() && $form->isValid()){
+
+            $photoFile = $form->get('photo')->getData();
+
+            // Si un fichier a été uploadé
+            if ($photoFile) {
+                // On le renomme
+                $newFilename = uniqid().'.'.$photoFile->guessExtension();
+
+                // On essaie de le déplacer sur le serveur
+                try {
+                    $photoFile->move(
+                        $this->getParameter('upload_directory'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('danger', 'Impossible d\'uploader la photo');
+                }
+
+                // On met àjour l'objet avec le bon nom de fichier
+                $produit->setPhoto($newFilename);
+            }
+
+
+            $this->getDoctrine()->getManager()->flush();
+
+            $this->addFlash('success', 'Produit updated');
+        }
         return $this->render('produit/edit.html.twig', [
             'produit' => $produit,
             'form' => $form->createView(),
@@ -129,33 +184,6 @@ class ProduitController extends AbstractController
         return $this->redirectToRoute('produit_index');
     }
 
-     /**
-     * @Route("/produit/{id}", name="produit_add")
-     * Fiche produit
-     */
-    public function produit(Request $request, Produit $produit, TranslatorInterface $t)
-    {
-       
-            $contenu_panier = new ContenuPanier();
-            $form = $this->createForm(ContenuPanierType::class, $contenu_panier);
-            $form->handleRequest($request);
-            if($form->isSubmitted() && $form->isValid()){
-                $em = $this->getDoctrine()->getManager();
-                // Je force le produit à ajouter au panier
-                $contenu_panier->addProduit($produit);
-
-                $em->persist($contenu_panier);
-                $em->flush();
     
-                $this->addFlash('success', $t->trans('products.added_cart'));
-            }
-
-            return $this->render('produit/produit.html.twig', [
-                'produit'      => $produit,
-                'ajout_produit' => $form->createView()
-            ]);
-        
-       
-    }
 
 }

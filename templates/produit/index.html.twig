@@ -18,7 +18,25 @@
             </tr>
         </thead>
         <tbody>
+        <div class="row">
         {% for produit in produits %}
+            <div class="row"></div>
+            <div class="col-sm-4">
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img-top"  height="280" src="{{ asset('uploads/' ~ produit.photo) }}" alt="Card image cap">
+                    <div class="card-body">
+                        <h5 class="card-title">{{produit.nom}}</h5>
+                        <p class="card-text">{{produit.description}}</p>
+                        <a href="#" class="btn btn-primary">Show</a>
+                        <a href="#" class="btn btn-primary">Ajouter au panier</a>
+                    </div>
+                </div>
+            </div>
+            
+        {% endfor %}
+        </div> 
+        {% for produit in produits %}
+           
             <tr>
                 <td>{{ produit.id }}</td>
                 <td>
