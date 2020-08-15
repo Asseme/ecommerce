@@ -6,6 +6,7 @@ use App\Entity\Produit;
 use App\Form\ProduitType;
 use App\Repository\ProduitRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -33,19 +34,33 @@ class ProduitController extends AbstractController
         $produit = new Produit();
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
+        $em = $this->getDoctrine()->getManager();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($produit);
-            $entityManager->flush();
+        if($form->isSubmitted() && $form->isValid()){
 
+            $photoFile = $form->get('photo')->getData();
+            
+            if ($photoFile) {
+                $newFilename = uniqid().'.'.$photoFile->guessExtension();
+
+                try {
+                    $photoFile->move(
+                        $this->getParameter('upload_dir'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('danger', 'Impossible d\'uploader la photo');
+                }
+
+                $produit->setPhoto($newFilename);
+            }
+
+            $em->persist($produit);
+            $em->flush();
+
+            $this->addFlash('success', 'Produit sauvegardé');
             return $this->redirectToRoute('produit_index');
         }
-
-        return $this->render('produit/new.html.twig', [
-            'produit' => $produit,
-            'form' => $form->createView(),
-        ]);
     }
 
     /**
@@ -66,9 +81,31 @@ class ProduitController extends AbstractController
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+        $em = $this->getDoctrine()->getManager();
+        if($form->isSubmitted() && $form->isValid()){
 
+            $photoFile = $form->get('photo')->getData();
+            
+            if ($photoFile) {
+                $newFilename = uniqid().'.'.$photoFile->guessExtension();
+
+                try {
+                    $photoFile->move(
+                        $this->getParameter('upload_dir'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('danger', 'Impossible d\'uploader la photo');
+                }
+
+                $produit->setPhoto($newFilename);
+            }
+
+            $em->persist($produit);
+            $em->flush();
+
+            $this->addFlash('success', 'Produit sauvegardé');
+      
             return $this->redirectToRoute('produit_index');
         }
 

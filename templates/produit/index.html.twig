@@ -21,7 +21,9 @@
         {% for produit in produits %}
             <tr>
                 <td>{{ produit.id }}</td>
-                <td>{{ produit.nom }}</td>
+                <td>
+                 <a href="{{ path('produit_show', {'id': produit.id}) }}">{{ produit.nom }}</a>
+                </td>
                 <td>{{ produit.description }}</td>
                 <td>{{ produit.prix }}</td>
                 <td>{{ produit.stock }}</td>
