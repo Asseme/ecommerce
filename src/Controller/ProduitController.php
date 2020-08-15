@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\ContenuPanier;
 use App\Entity\Produit;
+use App\Form\ContenuPanierType;
 use App\Form\ProduitType;
 use App\Repository\ProduitRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -10,10 +12,8 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Route("/produit")
- */
 class ProduitController extends AbstractController
 {
     /**
@@ -64,7 +64,7 @@ class ProduitController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="produit_show", methods={"GET"})
+     * @Route("/produit/{id}", name="produit_show", methods={"GET"})
      */
     public function show(Produit $produit): Response
     {
@@ -74,7 +74,7 @@ class ProduitController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit", name="produit_edit", methods={"GET","POST"})
+     * @Route("/produit/edit/{id}", name="produit_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, Produit $produit): Response
     {
@@ -116,7 +116,7 @@ class ProduitController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="produit_delete", methods={"DELETE"})
+     * @Route("/produit/delete/{id}", name="produit_delete", methods={"DELETE"})
      */
     public function delete(Request $request, Produit $produit): Response
     {
@@ -128,4 +128,34 @@ class ProduitController extends AbstractController
 
         return $this->redirectToRoute('produit_index');
     }
+
+     /**
+     * @Route("/produit/{id}", name="produit_add")
+     * Fiche produit
+     */
+    public function produit(Request $request, Produit $produit, TranslatorInterface $t)
+    {
+       
+            $contenu_panier = new ContenuPanier();
+            $form = $this->createForm(ContenuPanierType::class, $contenu_panier);
+            $form->handleRequest($request);
+            if($form->isSubmitted() && $form->isValid()){
+                $em = $this->getDoctrine()->getManager();
+                // Je force le produit à ajouter au panier
+                $contenu_panier->addProduit($produit);
+
+                $em->persist($contenu_panier);
+                $em->flush();
+    
+                $this->addFlash('success', $t->trans('products.added_cart'));
+            }
+
+            return $this->render('produit/produit.html.twig', [
+                'produit'      => $produit,
+                'ajout_produit' => $form->createView()
+            ]);
+        
+       
+    }
+
 }

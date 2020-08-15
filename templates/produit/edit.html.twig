@@ -4,7 +4,9 @@
 
 {% block body %}
     <h1>Edit Produit</h1>
-
+    {% if produit.photo is not empty %}
+	  <img src="{{asset('uploads/'~ produit.photo)}}" style="max-width: 300px;">
+	{% endif %}
     {{ include('produit/_form.html.twig', {'button_label': 'Update'}) }}
 
     <a href="{{ path('produit_index') }}">back to list</a>

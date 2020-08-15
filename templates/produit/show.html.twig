@@ -29,12 +29,16 @@
             </tr>
             <tr>
                 <th>Photo</th>
-                <td>{{ produit.photo }}</td>
+                <td>{% if produit.photo is not empty %}
+	                 <img src="{{asset('uploads/'~ produit.photo)}}" style="max-width: 300px;">
+	                {% endif %}
+                </td>
             </tr>
         </tbody>
     </table>
-
-    <a href="{{ path('produit_index') }}">back to list</a>
+    {{ include('produit/add.html.twig') }}
+	<br>
+    <a href="{{ path('produit_index') }}">back to list</a><br/>
 
     <a href="{{ path('produit_edit', {'id': produit.id}) }}">edit</a>
 

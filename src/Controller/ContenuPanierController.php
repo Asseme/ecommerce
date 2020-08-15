@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\ContenuPanier;
+use App\Entity\Produit;
 use App\Form\ContenuPanierType;
 use App\Repository\ContenuPanierRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -51,10 +52,11 @@ class ContenuPanierController extends AbstractController
     /**
      * @Route("/{id}", name="contenu_panier_show", methods={"GET"})
      */
-    public function show(ContenuPanier $contenuPanier): Response
+    public function show(ContenuPanier $contenuPanier,Produit $produit): Response
     {
         return $this->render('contenu_panier/show.html.twig', [
             'contenu_panier' => $contenuPanier,
+            'produit' => $produit,
         ]);
     }
 
