@@ -6,6 +6,7 @@ use App\Entity\Produit;
 use App\Form\ProduitType;
 use App\Repository\ProduitRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -34,6 +35,7 @@ class ProduitController extends AbstractController
         $produit = new Produit();
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
+<<<<<<< HEAD
         $entityManager = $this->getDoctrine()->getManager();
         
 
@@ -41,7 +43,33 @@ class ProduitController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($produit);
             $entityManager->flush();
+=======
+        $em = $this->getDoctrine()->getManager();
 
+        if($form->isSubmitted() && $form->isValid()){
+
+            $photoFile = $form->get('photo')->getData();
+            
+            if ($photoFile) {
+                $newFilename = uniqid().'.'.$photoFile->guessExtension();
+
+                try {
+                    $photoFile->move(
+                        $this->getParameter('upload_dir'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('danger', 'Impossible d\'uploader la photo');
+                }
+>>>>>>> 9d43ba7936ff0301822e5983d2f6e87f1608950a
+
+                $produit->setPhoto($newFilename);
+            }
+
+            $em->persist($produit);
+            $em->flush();
+
+            $this->addFlash('success', 'Produit sauvegardé');
             return $this->redirectToRoute('produit_index');
         } */
 
@@ -74,6 +102,7 @@ class ProduitController extends AbstractController
 
             $this->addFlash('success', 'Produit added');
         }
+<<<<<<< HEAD
 
 
 
@@ -82,6 +111,8 @@ class ProduitController extends AbstractController
             'produit' => $produit,
             'form' => $form->createView(),
         ]);
+=======
+>>>>>>> 9d43ba7936ff0301822e5983d2f6e87f1608950a
     }
 
     /**
@@ -102,9 +133,36 @@ class ProduitController extends AbstractController
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
 
+<<<<<<< HEAD
        /*  if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
+=======
+        $em = $this->getDoctrine()->getManager();
+        if($form->isSubmitted() && $form->isValid()){
 
+            $photoFile = $form->get('photo')->getData();
+            
+            if ($photoFile) {
+                $newFilename = uniqid().'.'.$photoFile->guessExtension();
+
+                try {
+                    $photoFile->move(
+                        $this->getParameter('upload_dir'),
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    $this->addFlash('danger', 'Impossible d\'uploader la photo');
+                }
+
+                $produit->setPhoto($newFilename);
+            }
+
+            $em->persist($produit);
+            $em->flush();
+>>>>>>> 9d43ba7936ff0301822e5983d2f6e87f1608950a
+
+            $this->addFlash('success', 'Produit sauvegardé');
+      
             return $this->redirectToRoute('produit_index');
         } */
 
