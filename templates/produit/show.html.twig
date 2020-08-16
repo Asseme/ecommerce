@@ -36,8 +36,10 @@
             </tr>
         </tbody>
     </table>
-    {{ include('produit/add.html.twig') }}
-	<br>
+    <div class="row">
+       <a href="{{ path('panier_add', {'id': produit.id})  }}">Ajouter au panier</a><br/>
+    </div> 
+
     <a href="{{ path('produit_index') }}">back to list</a><br/>
 
     <a href="{{ path('produit_edit', {'id': produit.id}) }}">edit</a>

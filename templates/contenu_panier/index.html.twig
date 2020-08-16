@@ -17,12 +17,12 @@
         <tbody>
         {% for contenu_panier in contenu_paniers %}
             <tr>
-                <td>{{ contenu_panier.id }}</td>
+                <td>{{ contenu_panier.produit.id }}</td>
                 <td>{{ contenu_panier.quantite }}</td>
-                <td>{{ contenu_panier.ajout ? contenu_panier.ajout|date('Y-m-d H:i:s') : '' }}</td>
+                {# <td>{{ contenu_panier.ajout ? contenu_panier.ajout|date('Y-m-d H:i:s') : '' }}</td> #}
                 <td>
-                    <a href="{{ path('contenu_panier_show', {'id': contenu_panier.id}) }}">show</a>
-                    <a href="{{ path('contenu_panier_edit', {'id': contenu_panier.id}) }}">edit</a>
+                    <a href="{{ path('contenu_panier_show', {'id': contenu_panier.produit.id}) }}">show</a>
+                    <a href="{{ path('contenu_panier_edit', {'id': contenu_panier.produit.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}

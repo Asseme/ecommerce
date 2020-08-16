@@ -1,6 +1,6 @@
-{# <form method="post" action="{{ path('produit_add', {'id': produit.id}) }}">
-    <input type="hidden" name="_method" value="ADD">
+<form method="post" action="{{ path('produit_add', {'id': produit.id}) }}">
+    <input type="hidden" name="_method" value="POST">
     <input type="hidden" name="_token" value="{{ csrf_token('add' ~ produit.id) }}">
-    <input type="text" name="qualite" >
-    <button class="btn">Add to cart</button>
-</form> #}
+    quantité : <input type="text" name="quantite" ><br/>
+    <button class="btn btn-primary">Add to cart</button>
+</form>

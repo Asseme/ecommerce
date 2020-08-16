@@ -3,12 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\ContenuPanier;
-use App\Entity\Produit;
 use App\Form\ContenuPanierType;
 use App\Repository\ContenuPanierRepository;
+use App\Repository\ProduitRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -19,10 +20,21 @@ class ContenuPanierController extends AbstractController
     /**
      * @Route("/", name="contenu_panier_index", methods={"GET"})
      */
-    public function index(ContenuPanierRepository $contenuPanierRepository): Response
+    public function index(ContenuPanierRepository $contenuPanierRepository, SessionInterface $session, ProduitRepository $produitRepository): Response
     {
+        $contenu_panier = $session->get('contenu_panier', []);
+
+        $contenu_panier_with_data = [];
+        foreach($contenu_panier as $id => $quantite){
+            $contenu_panier_with_data[] = [
+                'produit' => $produitRepository->find($id),
+                'quantite' => $quantite
+
+            ];
+        }
+        // dd($contenu_panier_with_data);
         return $this->render('contenu_panier/index.html.twig', [
-            'contenu_paniers' => $contenuPanierRepository->findAll(),
+            'contenu_paniers' => $contenu_panier_with_data,
         ]);
     }
 
@@ -52,11 +64,10 @@ class ContenuPanierController extends AbstractController
     /**
      * @Route("/{id}", name="contenu_panier_show", methods={"GET"})
      */
-    public function show(ContenuPanier $contenuPanier,Produit $produit): Response
+    public function show(ContenuPanier $contenuPanier): Response
     {
         return $this->render('contenu_panier/show.html.twig', [
             'contenu_panier' => $contenuPanier,
-            'produit' => $produit,
         ]);
     }
 
@@ -93,4 +104,23 @@ class ContenuPanierController extends AbstractController
 
         return $this->redirectToRoute('contenu_panier_index');
     }
+
+    /**
+     * @Route("/add/{id}", name="panier_add")
+     */
+    public function add($id , SessionInterface $session): Response
+        {
+            $contenu_panier = $session->get('contenu_panier', []);
+            if(!empty($contenu_panier[$id])){
+                $contenu_panier[$id]++;
+            }else {
+                $contenu_panier[$id] = 1;
+            }
+          
+            $session->set('contenu_panier', $contenu_panier);
+            dd($session->get('contenu_panier'));
+            return $this->redirectToRoute('contenu_panier_index');
+         }
+
+    
 }

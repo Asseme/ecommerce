@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class ProduitController extends AbstractController
 {
@@ -88,6 +89,10 @@ class ProduitController extends AbstractController
 
             $this->addFlash('success', 'Produit added');
         }
+        return $this->render('produit/new.html.twig', [	
+            'produit' => $produit,	
+            'form' => $form->createView(),	
+        ]);
     }
 
     /**
