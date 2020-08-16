@@ -1,0 +1,26 @@
+Moncompte:
+  titre: Mon compte
+
+Produit:
+  Nom: Nom
+  Prix: Prix
+  Photo: Photo
+  Ajouter au panier: Ajouter au panier
+
+Panier:
+  Achat: Achat
+  Etat: Etat
+
+Contenu:
+  Nom: Nom
+  Quantite: Quantite
+  Prix du produit: Prix du produit
+  Montant: Montant
+
+base:
+  home: Accueil
+  New Product: Nouveau produit
+  panier: panier
+
+recherche:
+  titre: Recherche

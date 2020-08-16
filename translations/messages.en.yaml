@@ -1,0 +1,26 @@
+Moncompte:
+  titre: My account
+
+Produit:
+  Nom: Name
+  Prix: Price
+  Photo: Image
+  Ajouter au panier: Add on cart
+
+Panier:
+  Achat: Buy
+  Etat: State
+
+Contenu:
+  Nom: Name
+  Quantite: Quantity
+  Prix du produit: Price
+  Montant: Amount
+
+base:
+  home: Home
+  New Product: New Product
+  panier: cart
+
+recherche:
+  titre: Search
