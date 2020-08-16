@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/contenu/panier")
@@ -51,7 +52,7 @@ class ContenuPanierController extends AbstractController
     /**
      * @Route("/new", name="contenu_panier_new", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
+    public function new(Request $request ,TranslatorInterface $translator): Response
     {
         $contenuPanier = new ContenuPanier();
         $form = $this->createForm(ContenuPanierType::class, $contenuPanier);
@@ -61,7 +62,7 @@ class ContenuPanierController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($contenuPanier);
             $entityManager->flush();
-
+            $this->addFlash('success',$translator->trans('contenu.ajoute'));
             return $this->redirectToRoute('contenu_panier_index');
         }
 
@@ -91,7 +92,7 @@ class ContenuPanierController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
-
+            
             return $this->redirectToRoute('contenu_panier_index');
         }
 

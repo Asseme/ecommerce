@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProduitController extends AbstractController
 {
@@ -27,38 +28,12 @@ class ProduitController extends AbstractController
     /**
      * @Route("/new", name="produit_new", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
+    public function new(Request $request,TranslatorInterface $translator): Response
     {
         $produit = new Produit();
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
         $em = $this->getDoctrine()->getManager();
-
-        if($form->isSubmitted() && $form->isValid()){
-
-            $photoFile = $form->get('photo')->getData();
-            
-            if ($photoFile) {
-                $newFilename = uniqid().'.'.$photoFile->guessExtension();
-
-                try {
-                    $photoFile->move(
-                        $this->getParameter('upload_dir'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    $this->addFlash('danger', 'Impossible d\'uploader la photo');
-                }
-
-                $produit->setPhoto($newFilename);
-            }
-
-            $em->persist($produit);
-            $em->flush();
-
-            $this->addFlash('success', 'Produit sauvegardé');
-            return $this->redirectToRoute('produit_index');
-        }
 
         if($form->isSubmitted() && $form->isValid()){
 
@@ -87,7 +62,7 @@ class ProduitController extends AbstractController
             $em->persist($produit);
             $em->flush();
 
-            $this->addFlash('success', 'Produit added');
+            $this->addFlash('success', $translator->trans('Produit.ajoute'));
         }
         return $this->render('produit/new.html.twig', [	
             'produit' => $produit,	
@@ -108,39 +83,11 @@ class ProduitController extends AbstractController
     /**
      * @Route("/produit/edit/{id}", name="produit_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, Produit $produit): Response
+    public function edit(Request $request, Produit $produit,TranslatorInterface $translator): Response
     {
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
-
-        $em = $this->getDoctrine()->getManager();
-        if($form->isSubmitted() && $form->isValid()){
-
-            $photoFile = $form->get('photo')->getData();
-            
-            if ($photoFile) {
-                $newFilename = uniqid().'.'.$photoFile->guessExtension();
-
-                try {
-                    $photoFile->move(
-                        $this->getParameter('upload_dir'),
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    $this->addFlash('danger', 'Impossible d\'uploader la photo');
-                }
-
-                $produit->setPhoto($newFilename);
-            }
-
-            $em->persist($produit);
-            $em->flush();
-
-            $this->addFlash('success', 'Produit sauvegardé');
-      
-            return $this->redirectToRoute('produit_index');
-        } 
-
+         
         if($form->isSubmitted() && $form->isValid()){
 
             $photoFile = $form->get('photo')->getData();
@@ -167,7 +114,7 @@ class ProduitController extends AbstractController
 
             $this->getDoctrine()->getManager()->flush();
 
-            $this->addFlash('success', 'Produit updated');
+            $this->addFlash('success', $translator->trans('Produit.modifie'));
         }
         return $this->render('produit/edit.html.twig', [
             'produit' => $produit,

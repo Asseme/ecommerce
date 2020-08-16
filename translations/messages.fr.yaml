@@ -6,10 +6,15 @@ Produit:
   Prix: Prix
   Photo: Photo
   Ajouter au panier: Ajouter au panier
+  modifie: Produit modifié
+  ajoute: Produit ajouté
 
 Panier:
   Achat: Achat
   Etat: Etat
+  ajoute: Panier ajouté
+  modifie: Panier modifié
+  supp: Panier supprimé
 
 Contenu:
   Nom: Nom
@@ -24,3 +29,6 @@ base:
 
 recherche:
   titre: Recherche
+
+contenu:
+  ajoute: contenu ajouté

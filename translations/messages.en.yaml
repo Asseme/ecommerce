@@ -1,15 +1,21 @@
 Moncompte:
   titre: My account
+  ajoute: Account edited
 
 Produit:
   Nom: Name
   Prix: Price
   Photo: Image
   Ajouter au panier: Add on cart
+  modifie: Product updated
+  ajoute: Product added
 
 Panier:
   Achat: Buy
   Etat: State
+  ajoute: Cart added
+  modifie: Cart edited
+  supp: Cart deleted
 
 Contenu:
   Nom: Name
@@ -24,3 +30,6 @@ base:
 
 recherche:
   titre: Search
+
+contenu:
+  ajoute: content added

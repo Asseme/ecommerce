@@ -10,13 +10,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MonCompteController extends AbstractController
 {
     /**
      * @Route("/mon/compte", name="mon_compte")
      */
-    public function index(Request $request, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, AppUserAuthenticator $authenticator, PanierRepository $panierRepository): Response
+    public function index(Request $request,TranslatorInterface $translator, UserPasswordEncoderInterface $passwordEncoder, GuardAuthenticatorHandler $guardHandler, AppUserAuthenticator $authenticator, PanierRepository $panierRepository): Response
     {
         /* On récupère le user connecté */
         $user = $this->getUser();
@@ -37,13 +38,13 @@ class MonCompteController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
             // do anything else you need here, like send an email
-
-            return $guardHandler->authenticateUserAndHandleSuccess(
+            $this->addFlash('success',$translator->trans('Moncompte.ajoute'));
+            /* return $guardHandler->authenticateUserAndHandleSuccess(
                 $user,
                 $request,
                 $authenticator,
                 'main' // firewall name in security.yaml
-            );
+            ); */
         }
 
         return $this->render('mon_compte/index.html.twig', [
