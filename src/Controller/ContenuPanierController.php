@@ -24,17 +24,27 @@ class ContenuPanierController extends AbstractController
     {
         $contenu_panier = $session->get('contenu_panier', []);
 
+        $ajout = new \DateTime('now');
+
         $contenu_panier_with_data = [];
         foreach($contenu_panier as $id => $quantite){
             $contenu_panier_with_data[] = [
                 'produit' => $produitRepository->find($id),
-                'quantite' => $quantite
-
+                'quantite' => $quantite,
+                'ajout' => $ajout
             ];
         }
-        // dd($contenu_panier_with_data);
+
+        $total = 0;
+
+        foreach($contenu_panier_with_data as $contenu){
+            $totalContenu = $contenu['produit']->getPrix() * $contenu['quantite'];
+            $total += $totalContenu;
+        }
+        //  dd($contenu_panier_with_data);
         return $this->render('contenu_panier/index.html.twig', [
             'contenu_paniers' => $contenu_panier_with_data,
+            'total' => $total
         ]);
     }
 
@@ -92,21 +102,21 @@ class ContenuPanierController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="contenu_panier_delete", methods={"DELETE"})
+     * @Route("delete/{id}", name="contenu_panier_delete")
      */
-    public function delete(Request $request, ContenuPanier $contenuPanier): Response
+    public function delete($id, SessionInterface $session): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$contenuPanier->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($contenuPanier);
-            $entityManager->flush();
+        $contenu_panier = $session->get('contenu_panier', []);
+        if(!empty($contenu_panier[$id])){
+            unset($contenu_panier[$id]);
         }
+        $session->set('contenu_panier', $contenu_panier);
 
         return $this->redirectToRoute('contenu_panier_index');
     }
 
     /**
-     * @Route("/add/{id}", name="panier_add")
+     * @Route("/add/{id}", name="contenu_panier_add")
      */
     public function add($id , SessionInterface $session): Response
         {
@@ -118,7 +128,20 @@ class ContenuPanierController extends AbstractController
             }
           
             $session->set('contenu_panier', $contenu_panier);
+            // dd($session->get('contenu_panier'));
+            return $this->redirectToRoute('contenu_panier_index');
+         }
+
+     /**
+     * @Route("/p/valider", name="panier_valider")
+     */
+    public function valid( SessionInterface $session): Response
+        {
+            $contenu_panier = $session->get('contenu_panier', []);
             dd($session->get('contenu_panier'));
+            
+            
+            $session->set('contenu_panier', $contenu_panier);
             return $this->redirectToRoute('contenu_panier_index');
          }
 

@@ -4,34 +4,48 @@
 
 {% block body %}
     <h1>ContenuPanier index</h1>
-
+   {% if contenu_paniers | length > 0 %}
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
+                
+                <th>Nom</th>
                 <th>Quantite</th>
-                <th>Ajout</th>
-                <th>actions</th>
+                <th>Prix du produit</th>
+                <th>Montant</th>
             </tr>
         </thead>
         <tbody>
         {% for contenu_panier in contenu_paniers %}
             <tr>
-                <td>{{ contenu_panier.produit.id }}</td>
+                
+                <td>{{ contenu_panier.produit.nom }}</td>
                 <td>{{ contenu_panier.quantite }}</td>
-                {# <td>{{ contenu_panier.ajout ? contenu_panier.ajout|date('Y-m-d H:i:s') : '' }}</td> #}
+                <td>{{ contenu_panier.produit.prix }}</td>
+                <td>{{ contenu_panier.produit.prix * contenu_panier.quantite }}</td>
                 <td>
+                  <a href="{{ path('contenu_panier_delete', {'id': contenu_panier.produit.id})}}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a></td>
+                {# <td>{{ contenu_panier.ajout ? contenu_panier.ajout|date('Y-m-d H:i:s') : '' }}</td> #}
+                {# <td>
                     <a href="{{ path('contenu_panier_show', {'id': contenu_panier.produit.id}) }}">show</a>
                     <a href="{{ path('contenu_panier_edit', {'id': contenu_panier.produit.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">no records found</td>
+                </td> #}
             </tr>
         {% endfor %}
         </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" class="text-right">Total :
+            </td>
+            <td>{{ total }}</td>
+          </tr>
+        </tfoot>
     </table>
+        {% else %}
+            <p>Le panier est vide </p>
+        {% endif %}
+
+    <a href="{{ path('panier_valider') }}">Valider</a>
 
     <a href="{{ path('contenu_panier_new') }}">Create new</a>
 {% endblock %}
